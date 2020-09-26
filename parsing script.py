@@ -32,9 +32,14 @@ for i in range(1, 10):
     if len(title_and_author) is 2 and 'скачать txt' in soup.find(class_='d_book').text:
         book_image = soup.find(class_='bookimage').find('img')['src']
         book_image_url = urljoin('http://tululu.org/', book_image)
-        book_comments = soup.find_all(class_='texts')
-        for comment in book_comments:
-            print(comment.find(class_='black').text)
+        # book_comments = soup.find_all(class_='texts')
+        # for comment in book_comments:
+        #     print(comment.find(class_='black').text)
+        print()
+        print('Заголовок: ', title_and_author[0].strip())
+        book_genre = soup.find('span', class_='d_book').find_all('a')
+        for title in book_genre:
+            print(title.text)
 
         # download_image(url=book_image_url, filename=book_image.split('/')[-1])
         # download_txt(url=book_download_txt, filename=f'{i}. {title_and_author[0].strip()}')
