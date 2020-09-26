@@ -2,6 +2,7 @@ import requests
 import os
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
+from urllib.parse import urljoin
 
 
 def download_txt(url, filename, folder='books/'):
@@ -13,11 +14,24 @@ def download_txt(url, filename, folder='books/'):
     return book_folder
 
 
+def download_image(url, filename, folder='images/'):
+    if not os.path.exists(folder):
+        os.makedirs(folder, exist_ok=True)
+    book_image_folder = f'{os.path.join(folder, sanitize_filename(filename))}'
+    with open(book_image_folder, 'wb') as file:
+        file.write(requests.get(url).content)
+    return book_image_folder
+
+
 for i in range(1, 10):
     book_title_author = f"http://tululu.org/b{i}/"
     book_download_txt = f"http://tululu.org/txt.php?id={i}"
     soup = BeautifulSoup(requests.get(book_title_author).text, 'lxml')
     title_and_author = soup.find('table').find('h1').text.split('::')
 
-    if len(title_and_author) is 2:
-        download_txt(book_download_txt, f'{i}. {title_and_author[0].strip()}')
+    if len(title_and_author) is 2 and 'скачать txt' in soup.find(class_='d_book').text:
+        book_image = soup.find(class_='bookimage').find('img')['src']
+        book_image_url = urljoin('http://tululu.org/', book_image)
+        # print(book_image.split('/')[-1])
+        download_image(url=book_image_url, filename=book_image.split('/')[-1])
+        download_txt(url=book_download_txt, filename=f'{i}. {title_and_author[0].strip()}')
