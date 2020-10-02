@@ -11,6 +11,10 @@ from urllib.parse import urljoin
 parser = argparse.ArgumentParser()
 parser.add_argument('--start_page', default=1, type=int)
 parser.add_argument('--end_page', default=701, type=int)
+parser.add_argument('--dest_folder', default='books_images/')
+parser.add_argument('--json_path', default='all_books.json')
+parser.add_argument('--skip_imgs', action='store_true')
+parser.add_argument('--skip_txt', action='store_true')
 args = parser.parse_args()
 
 
@@ -65,8 +69,14 @@ if __name__ == '__main__':
                 current_book['title'] = book_title_author
                 current_book['author'] = title_and_author[1].strip()
                 try:
-                    current_book['img_src'] = download_image(url=book_image_url, filename=book_image.split('/')[-1])
-                    current_book['book_path'] = download_txt(url=book_download_txt, filename=title_and_author[0].strip())
+                    if not args.skip_imgs:
+                        print(True)
+                        current_book['img_src'] = download_image(
+                            url=book_image_url, filename=book_image.split('/')[-1], folder=args.dest_folder)
+                    if not args.skip_txt:
+                        print(True)
+                        current_book['book_path'] = download_txt(
+                            url=book_download_txt, filename=title_and_author[0].strip(), folder=args.dest_folder)
                 except requests.exceptions.ConnectionError:
                     status_code = "Connection refused"
                     continue
