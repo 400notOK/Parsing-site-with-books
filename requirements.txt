@@ -1,5 +1,4 @@
 pathvalidate==2.3.0
 beautifulsoup4==4.9.1
 requests==2.24.0
-pathvalidate==2.3.0
-urllib3==1.25.10
+lxml==4.6.2
